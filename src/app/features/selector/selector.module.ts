@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { SelectorPopupDialogModule } from './components/selector-popup/selector-popup-dialog.module';
 
 @NgModule({
     declarations: [
@@ -21,7 +22,8 @@ import { MatChipsModule } from '@angular/material/chips';
         MatInputModule,
         MatButtonModule,
         MatIconModule,
-        MatChipsModule
+        MatChipsModule,
+        SelectorPopupDialogModule
     ],
     exports: [
         SelectorComponent

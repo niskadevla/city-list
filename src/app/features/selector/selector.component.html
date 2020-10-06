@@ -3,8 +3,8 @@
         <mat-radio-group formControlName="radioGroup"
                          aria-label="Select an option"
                          (change)="changeMode($event)">
-            <mat-radio-button value="multiply">Multiply</mat-radio-button>
-            <mat-radio-button value="single">Single</mat-radio-button>
+            <mat-radio-button [value]="true">Multiple</mat-radio-button>
+            <mat-radio-button [value]="false">Single</mat-radio-button>
         </mat-radio-group>
         <br>
         <mat-form-field appearance="outline" class="mt3">
@@ -33,4 +33,6 @@
                    type="text">
         </mat-form-field>
     </form>
+
+
 </div>
