@@ -21,16 +21,16 @@
         </mat-form-field>
         <br>
         <mat-form-field *ngIf="searchResult?.length" appearance="outline">
-            <input formControlName="result"
+            <mat-chip-list #chipList>
+                <mat-chip>
+                    Selected countries: {{searchResult?.length}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+            </mat-chip-list>
+            <input [matChipInputFor]="chipList"
+                    formControlName="result"
                    matInput
                    type="text">
-            <button mat-button
-                    matSuffix
-                    mat-icon-button
-                    aria-label="Clear"
-                    (click)="searchResult=[]">
-                <mat-icon>close</mat-icon>
-            </button>
         </mat-form-field>
     </form>
 </div>
