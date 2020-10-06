@@ -1,0 +1,36 @@
+<div class="selector">
+    <form [formGroup]="form">
+        <mat-radio-group formControlName="radioGroup"
+                         aria-label="Select an option"
+                         (change)="changeMode($event)">
+            <mat-radio-button value="multiply">Multiply</mat-radio-button>
+            <mat-radio-button value="single">Single</mat-radio-button>
+        </mat-radio-group>
+        <br>
+        <mat-form-field appearance="outline" class="mt3">
+            <input formControlName="search"
+                   matInput
+                   type="text"
+                   placeholder="Search">
+            <button mat-button
+                    matSuffix
+                    mat-icon-button
+                    (click)="showAllCountries()">
+                <mat-icon>view_list</mat-icon>
+            </button>
+        </mat-form-field>
+        <br>
+        <mat-form-field *ngIf="searchResult?.length" appearance="outline">
+            <input formControlName="result"
+                   matInput
+                   type="text">
+            <button mat-button
+                    matSuffix
+                    mat-icon-button
+                    aria-label="Clear"
+                    (click)="searchResult=[]">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-form-field>
+    </form>
+</div>

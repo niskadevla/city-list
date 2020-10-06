@@ -2,3 +2,21 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.pt3 {
+    padding-top: 3rem;
+}
+
+.mt3 {
+    margin-top: 3rem;
+}
+
+.mat-radio-button {
+    margin-right: 1rem;
+}
