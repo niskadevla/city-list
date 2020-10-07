@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { SelectorPopupDialogModule } from './components/selector-popup/selector-popup-dialog.module';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 @NgModule({
     declarations: [
@@ -23,7 +24,8 @@ import { SelectorPopupDialogModule } from './components/selector-popup/selector-
         MatButtonModule,
         MatIconModule,
         MatChipsModule,
-        SelectorPopupDialogModule
+        SelectorPopupDialogModule,
+        MatAutocompleteModule
     ],
     exports: [
         SelectorComponent

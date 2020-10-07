@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { SelectorPopupDialogComponent } from './components/selector-popup/selector-popup-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MULTIPLE } from '../../shared/Utils/constants';
 import { ICountry } from '../../shared/models/country.model';
 import { CountriesService } from '../../shared/services/countries.service';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
     selector: 'app-selector',
@@ -14,12 +15,12 @@ import { CountriesService } from '../../shared/services/countries.service';
     styleUrls: [ './selector.component.scss' ]
 })
 export class SelectorComponent implements OnInit, OnDestroy {
-
     form: FormGroup;
     multiple = MULTIPLE;
     countries: ICountry[];
     selectedCountries: ICountry[];
     subscriptions: Subscription = new Subscription();
+    filteredCountries: Observable<string[]>;
 
     constructor(private fb: FormBuilder,
                 private dialog: MatDialog,
@@ -27,8 +28,8 @@ export class SelectorComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.initData();
         this.initForm();
+        this.initData();
     }
 
     ngOnDestroy(): void {
@@ -48,6 +49,14 @@ export class SelectorComponent implements OnInit, OnDestroy {
             this.countries = countries;
             this.selectedCountries = this.countriesService.getSelectedCountries(countries);
         }));
+
+        this.filteredCountries = this.form.controls.search.valueChanges
+                                     .pipe(
+                                         startWith(''),
+                                         map(value => this._filter(value))
+                                     );
+
+        console.log(this.form.controls.search.valueChanges);
     }
 
     changeMode($event: MatRadioChange): void {
@@ -70,5 +79,27 @@ export class SelectorComponent implements OnInit, OnDestroy {
     reset(): void {
         this.countriesService.resetSelectedCountries(this.countries);
     }
+
+    private _filter(value: string): string[] {
+        const filterValue = value.toLowerCase();
+        const countries: string[] = this.countries.map(country => country.name);
+
+        return countries.filter(option => option.toLowerCase()
+                                                     .includes(filterValue));
+    }
+
+    // searchCountries(): void {
+    //     let search = this.form.controls.search.value;
+    //
+    //     if (!search) {
+    //         return;
+    //     } else {
+    //         search = search.toLowerCase();
+    //     }
+    //
+    //     this.filteredCountries.next(
+    //         this.countries.filter(country => country.name.toLowerCase().includes(search))
+    //     );
+    // }
 
 }

@@ -1,5 +1,5 @@
 <div class="selector">
-    <form [formGroup]="form">
+    <form [formGroup]="form" class="example-form">
         <mat-radio-group formControlName="radioGroup"
                          aria-label="Select an option"
                          (change)="changeMode($event)">
@@ -7,32 +7,55 @@
             <mat-radio-button [value]="false" (change)="reset()">Single</mat-radio-button>
         </mat-radio-group>
         <br>
-        <mat-form-field appearance="outline" class="mt3">
+
+        <mat-form-field appearance="outline"
+                        class="example-full-width mt3">
             <input formControlName="search"
+                    type="text"
+                   aria-label="String"
                    matInput
-                   type="text"
-                   placeholder="Search">
+                   [matAutocomplete]="auto">
             <button mat-button
                     matSuffix
                     mat-icon-button
                     (click)="showAllCountries()">
                 <mat-icon>view_list</mat-icon>
             </button>
+            <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of filteredCountries | async" [value]="option">
+                    {{option}}
+                </mat-option>
+            </mat-autocomplete>
         </mat-form-field>
+
+        <!--        <mat-form-field appearance="outline" class="mt3">-->
+        <!--            <input formControlName="search"-->
+        <!--                   matInput-->
+        <!--                   type="text"-->
+        <!--                   placeholder="Search">-->
+        <!--            <button mat-button-->
+        <!--                    matSuffix-->
+        <!--                    mat-icon-button-->
+        <!--                    (click)="showAllCountries()">-->
+        <!--                <mat-icon>view_list</mat-icon>-->
+        <!--            </button>-->
+        <!--        </mat-form-field>-->
         <br>
+
         <mat-form-field *ngIf="selectedCountries?.length" appearance="outline">
             <mat-chip-list #chipList>
-                <mat-chip removable="true" (removed)="reset()">
+                <mat-chip removable="true"
+                          [selectable]="true"
+                          (removed)="reset()">
                     Selected countries: {{selectedCountries?.length}}
                     <mat-icon matChipRemove>cancel</mat-icon>
                 </mat-chip>
             </mat-chip-list>
             <input [matChipInputFor]="chipList"
-                    formControlName="result"
+                   formControlName="result"
                    matInput
                    type="text">
         </mat-form-field>
     </form>
-
 
 </div>
