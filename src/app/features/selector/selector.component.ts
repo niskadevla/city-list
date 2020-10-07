@@ -64,16 +64,11 @@ export class SelectorComponent implements OnInit, OnDestroy {
     }
 
     showAllCountries(): void {
-        const dialogRef = this.dialog.open(SelectorPopupDialogComponent, {
+        this.dialog.open(SelectorPopupDialogComponent, {
             data: {
                 multiple: this.multiple
             }, autoFocus: false
         });
-
-        this.subscriptions.add(dialogRef.afterClosed()
-                                        .subscribe(result => {
-                                            console.log(`Dialog result: ${ result }`);
-                                        }));
     }
 
     reset(): void {
@@ -87,19 +82,4 @@ export class SelectorComponent implements OnInit, OnDestroy {
         return countries.filter(option => option.toLowerCase()
                                                      .includes(filterValue));
     }
-
-    // searchCountries(): void {
-    //     let search = this.form.controls.search.value;
-    //
-    //     if (!search) {
-    //         return;
-    //     } else {
-    //         search = search.toLowerCase();
-    //     }
-    //
-    //     this.filteredCountries.next(
-    //         this.countries.filter(country => country.name.toLowerCase().includes(search))
-    //     );
-    // }
-
 }

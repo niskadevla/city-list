@@ -12,7 +12,8 @@
                         class="example-full-width mt3">
             <input formControlName="search"
                     type="text"
-                   aria-label="String"
+                   placeholder="Search"
+                   aria-label="Search"
                    matInput
                    [matAutocomplete]="auto">
             <button mat-button
@@ -27,19 +28,6 @@
                 </mat-option>
             </mat-autocomplete>
         </mat-form-field>
-
-        <!--        <mat-form-field appearance="outline" class="mt3">-->
-        <!--            <input formControlName="search"-->
-        <!--                   matInput-->
-        <!--                   type="text"-->
-        <!--                   placeholder="Search">-->
-        <!--            <button mat-button-->
-        <!--                    matSuffix-->
-        <!--                    mat-icon-button-->
-        <!--                    (click)="showAllCountries()">-->
-        <!--                <mat-icon>view_list</mat-icon>-->
-        <!--            </button>-->
-        <!--        </mat-form-field>-->
         <br>
 
         <mat-form-field *ngIf="selectedCountries?.length" appearance="outline">
