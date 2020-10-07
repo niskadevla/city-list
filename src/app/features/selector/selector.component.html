@@ -4,7 +4,7 @@
                          aria-label="Select an option"
                          (change)="changeMode($event)">
             <mat-radio-button [value]="true">Multiple</mat-radio-button>
-            <mat-radio-button [value]="false">Single</mat-radio-button>
+            <mat-radio-button [value]="false" (change)="reset()">Single</mat-radio-button>
         </mat-radio-group>
         <br>
         <mat-form-field appearance="outline" class="mt3">
@@ -20,10 +20,10 @@
             </button>
         </mat-form-field>
         <br>
-        <mat-form-field *ngIf="searchResult?.length" appearance="outline">
+        <mat-form-field *ngIf="selectedCountries?.length" appearance="outline">
             <mat-chip-list #chipList>
-                <mat-chip>
-                    Selected countries: {{searchResult?.length}}
+                <mat-chip removable="true" (removed)="reset()">
+                    Selected countries: {{selectedCountries?.length}}
                     <mat-icon matChipRemove>cancel</mat-icon>
                 </mat-chip>
             </mat-chip-list>

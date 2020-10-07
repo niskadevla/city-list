@@ -1,0 +1,16 @@
+.radio {
+    position: relative;
+}
+
+.radio::before {
+    content: "\25CE";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+.radio:active::before,
+.radio:focus::before{
+    content: "\2299";
+}
