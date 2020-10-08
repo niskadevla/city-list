@@ -13,7 +13,7 @@ export class CountriesService {
     constructor() {
     }
 
-    getCountries(): ICountry[]  {
+    getCountries(): ICountry[] {
         return COUNTRIES;
     }
 
@@ -22,13 +22,9 @@ export class CountriesService {
     }
 
     setSelectedCountries(countries: ICountry[], selectedCountries: string[]): void {
-        const newCountries = countries.map(country => {
-            if (selectedCountries.includes(country.name)) {
-                country.selected = true;
-            }
-
-            return country;
-        });
+        const newCountries = countries.map(country => selectedCountries.includes(country.name)
+                                                      ? ( { ...country, selected: true } )
+                                                      : country);
 
         this.updateCountries(newCountries);
     }
@@ -38,11 +34,7 @@ export class CountriesService {
     }
 
     resetSelectedCountries(countries: ICountry[]): void {
-        const newCountries = countries.map(country => {
-            country.selected = false;
-
-            return country;
-        });
+        const newCountries = countries.map(country => ( { ...country, selected: false } ));
 
         this.updateCountries(newCountries);
     }

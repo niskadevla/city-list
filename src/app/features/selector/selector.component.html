@@ -23,7 +23,7 @@
                 <mat-icon>view_list</mat-icon>
             </button>
             <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let option of filteredCountries | async" [value]="option">
+                <mat-option *ngFor="let option of filteredCountries$ | async" [value]="option">
                     {{option}}
                 </mat-option>
             </mat-autocomplete>

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
@@ -21,11 +21,12 @@ export class SelectorComponent implements OnInit, OnDestroy {
     public countries: ICountry[];
     public selectedCountries: ICountry[];
     public subscriptions: Subscription = new Subscription();
-    public filteredCountries: Observable<string[]>;
+    public filteredCountries$: Observable<string[]>;
 
     constructor(private fb: FormBuilder,
                 private dialog: MatDialog,
-                private countriesService: CountriesService) {
+                private countriesService: CountriesService,
+                private cdr: ChangeDetectorRef) {
     }
 
     ngOnInit(): void {
@@ -49,12 +50,13 @@ export class SelectorComponent implements OnInit, OnDestroy {
         this.subscriptions.add(this.countriesService.countries$.subscribe(countries => {
             this.countries = countries;
             this.selectedCountries = this.countriesService.getSelectedCountries(countries);
+            this.cdr.detectChanges();
         }));
 
-        this.filteredCountries = this.form.controls.search.valueChanges
-                                     .pipe(
-                                         map(value => this._filter(value))
-                                     );
+        this.filteredCountries$ = this.form.controls.search.valueChanges
+                                      .pipe(
+                                          map(value => this._filter(value))
+                                      );
     }
 
     public changeMode($event: MatRadioChange): void {

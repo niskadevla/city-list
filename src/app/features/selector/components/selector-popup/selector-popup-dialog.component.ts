@@ -4,8 +4,9 @@ import { ICountry } from '../../../../shared/models/country.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IDialogData } from '../../../../shared/models/dialogData.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ReplaySubject, Subscription } from 'rxjs';
+import { ReplaySubject, Subject } from 'rxjs';
 import { MatSelectionList } from '@angular/material/list';
+import { take, takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'app-selector-popup-dialog',
@@ -19,9 +20,9 @@ export class SelectorPopupDialogComponent implements OnInit, OnDestroy {
     public countries: ICountry[];
     public form: FormGroup;
     public multiple: boolean;
-    public subscriptions: Subscription = new Subscription();
     public isAllSelected: boolean;
-    public filteredCountries: ReplaySubject<ICountry[]> = new ReplaySubject<ICountry[]>();
+    public filteredCountries$: ReplaySubject<ICountry[]> = new ReplaySubject<ICountry[]>();
+    private destroy$ = new Subject<void>();
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: IDialogData,
                 private countriesService: CountriesService,
@@ -34,7 +35,8 @@ export class SelectorPopupDialogComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.subscriptions.unsubscribe();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     private _initForm(): void {
@@ -45,13 +47,18 @@ export class SelectorPopupDialogComponent implements OnInit, OnDestroy {
     }
 
     private _initData(): void {
-        this.subscriptions.add(this.countriesService.countries$.subscribe(countries => {
-            this.countries = countries;
-        }));
+        this.countriesService.countries$
+            .pipe(
+                take(1),
+                takeUntil(this.destroy$)
+            )
+            .subscribe(countries => {
+                this.countries = countries;
+            });
 
         this.multiple = this.data.multiple;
         this.isAllSelected = this.data.isAllSelected;
-        this.filteredCountries.next(this.countries.slice());
+        this.filteredCountries$.next(this.countries.slice());
     }
 
     public onSelect(): void {
@@ -79,8 +86,9 @@ export class SelectorPopupDialogComponent implements OnInit, OnDestroy {
     public searchCountries(): void {
         const search = this.form.controls.search.value?.toLowerCase();
 
-        this.filteredCountries.next(
-            this.countries.filter(country => country.name.toLowerCase().includes(search))
+        this.filteredCountries$.next(
+            this.countries.filter(country => country.name.toLowerCase()
+                                                    .includes(search))
         );
     }
 

@@ -18,7 +18,7 @@
         <mat-selection-list #countriesList
                             formControlName="selectionList"
                             [multiple]="multiple">
-            <mat-list-option *ngFor="let country of filteredCountries | async"
+            <mat-list-option *ngFor="let country of filteredCountries$ | async"
                              checkboxPosition="before"
                              [value]="country.name"
                              [class.radio]="!multiple"
