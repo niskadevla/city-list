@@ -9,5 +9,3 @@ export const COUNTRIES: ICountry[] = [
     { code: 'AO', name: 'Angola', selected: false },
     { code: 'AI', name: 'Anguilla', selected: false }
 ];
-
-export const MULTIPLE = true;

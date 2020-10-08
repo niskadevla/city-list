@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>Select country</h2>
 <mat-dialog-content class="mat-typography">
-    <form [formGroup]="form" class="example-form">
+    <form class="example-form" [formGroup]="form">
         <mat-form-field appearance="outline" class="example-full-width">
             <input matInput
                    formControlName="search"
@@ -16,13 +16,13 @@
         <hr>
 
         <mat-selection-list #countriesList
-                            [multiple]="multiple"
-                            formControlName="selectionList">
+                            formControlName="selectionList"
+                            [multiple]="multiple">
             <mat-list-option *ngFor="let country of filteredCountries | async"
+                             checkboxPosition="before"
                              [value]="country.name"
                              [class.radio]="!multiple"
-                             [selected]="country.selected"
-                             checkboxPosition="before">
+                             [selected]="country.selected">
                 {{country.code}} | {{country.name}}
             </mat-list-option>
         </mat-selection-list>
@@ -30,9 +30,9 @@
     </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-raised-button
+    <button color="primary"
+            mat-raised-button
             [mat-dialog-close]="true"
-            color="primary"
             (click)="onSelect()">
         Select
     </button>

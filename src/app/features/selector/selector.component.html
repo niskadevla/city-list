@@ -1,5 +1,5 @@
 <div class="selector">
-    <form [formGroup]="form" class="example-form">
+    <form class="example-form" [formGroup]="form">
         <mat-radio-group formControlName="radioGroup"
                          aria-label="Select an option"
                          (change)="changeMode($event)">
@@ -39,10 +39,10 @@
                     <mat-icon matChipRemove>cancel</mat-icon>
                 </mat-chip>
             </mat-chip-list>
-            <input [matChipInputFor]="chipList"
-                   formControlName="result"
+            <input formControlName="result"
                    matInput
-                   type="text">
+                   type="text"
+                   [matChipInputFor]="chipList">
         </mat-form-field>
     </form>
 

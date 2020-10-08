@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CountriesService } from '../../../../shared/services/countries.service';
 import { ICountry } from '../../../../shared/models/country.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -10,17 +10,18 @@ import { MatSelectionList } from '@angular/material/list';
 @Component({
     selector: 'app-selector-popup-dialog',
     templateUrl: './selector-popup-dialog.component.html',
-    styleUrls: [ './selector-popup-dialog.component.scss' ]
+    styleUrls: [ './selector-popup-dialog.component.scss' ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SelectorPopupDialogComponent implements OnInit, OnDestroy {
 
     @ViewChild(MatSelectionList) countriesList: MatSelectionList;
-    countries: ICountry[];
-    form: FormGroup;
-    multiple: boolean;
-    subscriptions: Subscription = new Subscription();
-    isAllSelected = false;
-    filteredCountries: ReplaySubject<ICountry[]> = new ReplaySubject<ICountry[]>();
+    public countries: ICountry[];
+    public form: FormGroup;
+    public multiple: boolean;
+    public subscriptions: Subscription = new Subscription();
+    public isAllSelected: boolean;
+    public filteredCountries: ReplaySubject<ICountry[]> = new ReplaySubject<ICountry[]>();
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: IDialogData,
                 private countriesService: CountriesService,
@@ -28,58 +29,55 @@ export class SelectorPopupDialogComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.initForm();
-        this.initData();
+        this._initForm();
+        this._initData();
     }
 
     ngOnDestroy(): void {
         this.subscriptions.unsubscribe();
     }
 
-    initForm(): void {
+    private _initForm(): void {
         this.form = this.fb.group({
             search: this.fb.control(''),
             selectionList: this.fb.control('')
         });
     }
 
-    initData(): void {
+    private _initData(): void {
         this.subscriptions.add(this.countriesService.countries$.subscribe(countries => {
             this.countries = countries;
         }));
 
         this.multiple = this.data.multiple;
+        this.isAllSelected = this.data.isAllSelected;
         this.filteredCountries.next(this.countries.slice());
     }
 
-    onSelect(): void {
+    public onSelect(): void {
         this.countriesService.setSelectedCountries(this.countries, this.form.controls.selectionList.value);
     }
 
-    selectAll(): void {
+    private _selectAll(): void {
         this.countriesList.selectAll();
     }
 
-    deselectAll(): void {
+    private _deselectAll(): void {
         this.countriesList.deselectAll();
     }
 
-    toggleAllSelection(): void {
+    public toggleAllSelection(): void {
         this.isAllSelected = !this.isAllSelected;
-        this.isAllSelected
-        ? this.selectAll()
-        : this.deselectAll();
+
+        if (this.isAllSelected) {
+            this._selectAll();
+        } else {
+            this._deselectAll();
+        }
     }
 
-    searchCountries(): void {
-        let search = this.form.controls.search.value;
-
-        if (!search) {
-            this.filteredCountries.next(this.countries.slice());
-            return;
-        } else {
-            search = search.toLowerCase();
-        }
+    public searchCountries(): void {
+        const search = this.form.controls.search.value?.toLowerCase();
 
         this.filteredCountries.next(
             this.countries.filter(country => country.name.toLowerCase().includes(search))
