@@ -5,8 +5,11 @@ import { Observable, Subscription } from 'rxjs';
 import { SelectorPopupDialogComponent } from './components/selector-popup/selector-popup-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ICountry } from '../../shared/models/country.model';
-import { CountriesService } from '../../shared/services/countries.service';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
+import { select, Store } from '@ngrx/store';
+import { ICountryState } from '../../reducers/countries/countries.reducer';
+import { selectCountries } from '../../reducers/countries/countries.selector';
+import { CountriesResetSelectedAction } from '../../reducers/countries/countries.actions';
 
 @Component({
     selector: 'app-selector',
@@ -25,8 +28,8 @@ export class SelectorComponent implements OnInit, OnDestroy {
 
     constructor(private fb: FormBuilder,
                 private dialog: MatDialog,
-                private countriesService: CountriesService,
-                private cdr: ChangeDetectorRef) {
+                private cdr: ChangeDetectorRef,
+                private store$: Store<ICountryState>) {
     }
 
     ngOnInit(): void {
@@ -47,11 +50,11 @@ export class SelectorComponent implements OnInit, OnDestroy {
     }
 
     private _initData(): void {
-        this.subscriptions.add(this.countriesService.countries$.subscribe(countries => {
-            this.countries = countries;
-            this.selectedCountries = this.countriesService.getSelectedCountries(countries);
-            this.cdr.detectChanges();
-        }));
+        this.subscriptions.add(this.store$.pipe(select(selectCountries))
+                                   .subscribe(countries => {
+                                       this.countries = countries;
+                                       this.selectedCountries = this.getSelectedCountries();
+                                   }));
 
         this.filteredCountries$ = this.form.controls.search.valueChanges
                                       .pipe(
@@ -64,21 +67,39 @@ export class SelectorComponent implements OnInit, OnDestroy {
     }
 
     public showAllCountries(): void {
-        this.dialog.open(SelectorPopupDialogComponent, {
+        const dialogRef = this.dialog.open(SelectorPopupDialogComponent, {
             data: {
                 multiple: this.multiple,
                 isAllSelected: this.isAllSelected
             }, autoFocus: false
         });
+
+        this.clearInput();
+
+        dialogRef.afterClosed()
+                 .pipe(take(1))
+                 .subscribe(result => {
+                     if (result) {
+                         this.cdr.detectChanges();
+                     }
+                 });
     }
 
     public reset(): void {
-        this.countriesService.resetSelectedCountries(this.countries);
+        this.store$.dispatch(new CountriesResetSelectedAction());
     }
 
     private _filter(value: string): string[] {
         return this.countries.map(country => country.name)
                    .filter(option => option.toLowerCase()
-                                           .includes(value.toLowerCase()));
+                                           .includes(value?.toLowerCase()));
+    }
+
+    private getSelectedCountries(): ICountry[] {
+        return this.countries.filter(country => country.selected);
+    }
+
+    public clearInput(): void {
+        this.form.controls.search?.reset();
     }
 }
