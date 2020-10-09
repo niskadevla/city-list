@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>Select country</h2>
+<mat-dialog-content class="mat-typography">
+    <form class="example-form" [formGroup]="form">
+        <mat-form-field appearance="outline" class="example-full-width">
+            <input matInput
+                   formControlName="search"
+                   (keyup)="searchCountries()">
+            <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+        <br>
+        <mat-checkbox *ngIf="multiple"
+                      class="example-margin"
+                      (change)="toggleAllSelection()">
+            Select All countries
+        </mat-checkbox>
+        <hr>
+
+        <mat-selection-list #countriesList
+                            formControlName="selectionList"
+                            [multiple]="multiple">
+            <mat-list-option *ngFor="let country of filteredCountries$ | async"
+                             checkboxPosition="before"
+                             [value]="country.name"
+                             [class.radio]="!multiple"
+                             [selected]="country.selected">
+                {{country.code}} | {{country.name}}
+            </mat-list-option>
+        </mat-selection-list>
+
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button color="primary"
+            mat-raised-button
+            [mat-dialog-close]="true"
+            (click)="onSelect()">
+        Select
+    </button>
+    <button mat-raised-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

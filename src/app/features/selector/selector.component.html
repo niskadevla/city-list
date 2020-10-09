@@ -1,0 +1,49 @@
+<div class="selector">
+    <form class="example-form" [formGroup]="form">
+        <mat-radio-group formControlName="radioGroup"
+                         aria-label="Select an option"
+                         (change)="changeMode($event)">
+            <mat-radio-button [value]="true">Multiple</mat-radio-button>
+            <mat-radio-button [value]="false" (change)="reset()">Single</mat-radio-button>
+        </mat-radio-group>
+        <br>
+
+        <mat-form-field appearance="outline"
+                        class="example-full-width mt3">
+            <input formControlName="search"
+                    type="text"
+                   placeholder="Search"
+                   aria-label="Search"
+                   matInput
+                   [matAutocomplete]="auto">
+            <button mat-button
+                    matSuffix
+                    mat-icon-button
+                    (click)="showAllCountries()">
+                <mat-icon>view_list</mat-icon>
+            </button>
+            <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of filteredCountries$ | async" [value]="option">
+                    {{option}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+        <br>
+
+        <mat-form-field *ngIf="selectedCountries?.length" appearance="outline">
+            <mat-chip-list #chipList>
+                <mat-chip removable="true"
+                          [selectable]="true"
+                          (removed)="reset()">
+                    Selected countries: {{selectedCountries?.length}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+            </mat-chip-list>
+            <input formControlName="result"
+                   matInput
+                   type="text"
+                   [matChipInputFor]="chipList">
+        </mat-form-field>
+    </form>
+
+</div>
