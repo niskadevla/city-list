@@ -95,7 +95,7 @@ export class SelectorComponent implements OnInit, OnDestroy {
                                            .includes(value?.toLowerCase()));
     }
 
-    private getSelectedCountries(): ICountry[] {
+    public getSelectedCountries(): ICountry[] {
         return this.countries.filter(country => country.selected);
     }
 
