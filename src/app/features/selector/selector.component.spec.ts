@@ -1,17 +1,51 @@
 import { SelectorComponent } from './selector.component';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+    AbstractControlOptions,
+    AsyncValidatorFn,
+    FormBuilder, FormControl,
+    FormGroup,
+    ReactiveFormsModule,
+    ValidatorFn
+} from '@angular/forms';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { ChangeDetectorRef, Provider } from '@angular/core';
+import { ChangeDetectorRef, NO_ERRORS_SCHEMA, Provider } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ICountryState } from '../../reducers/countries/countries.reducer';
+import { SelectorPopupDialogModule } from './components/selector-popup/selector-popup-dialog.module';
+import { BrowserTestingModule } from '@angular/platform-browser/testing';
+import { CommonModule } from '@angular/common';
+import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
+import { SelectorModule } from './selector.module';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { Observable } from 'rxjs';
+import { MatIconTestingModule } from '@angular/material/icon/testing';
 
 const STORE: Readonly<Provider> = {
-    provide: 'STORE', useValue: [
+    provide: 'Store', useValue: [
         { code: 'AF', name: 'Afghanistan', selected: false },
         { code: 'AL', name: 'Albania', selected: true }
     ]
 };
+
+// const MockFormBuilder = jest.createMockFromModule('FormBuilder');
+// const MockMatDialog = jest.createMockFromModule('MatDialog');
+// const MockChangeDetectorRef = jest.createMockFromModule('ChangeDetectorRef');
+export class FormBuilderStub {
+    group(controlsConfig) {
+        return this;
+    }
+
+    control(formState: any) {
+        return this;
+    }
+}
 
 describe('SelectorComponent', () => {
     let component: SelectorComponent;
@@ -63,34 +97,59 @@ describe('SelectorComponent', () => {
 describe('Integration tests. SelectorComponent', () => {
     let component: SelectorComponent;
     let fixture: ComponentFixture<SelectorComponent>;
-    // let fb: FormBuilder;
-    // let dialog: MatDialog;
-    // let cdr: ChangeDetectorRef;
-    // let store$: Store<ICountryState>;
 
-    beforeEach(async (() => {
+    beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [ SelectorComponent ],
-            imports: [ReactiveFormsModule],
-            providers: [ FormBuilder,
-                         MatDialog,
-                         ChangeDetectorRef,
-                         Store ]
-        }).compileComponents();
+            imports: [
+                ReactiveFormsModule,
+                CommonModule,
+                ReactiveFormsModule,
+                MatAutocompleteModule,
+                MatIconTestingModule,
+                SelectorPopupDialogModule,
+                BrowserTestingModule,
+                BrowserDynamicTestingModule ],
+            providers: [
+                // {provide: FormBuilder, useClass: FormBuilderStub},
+                // {provide: MatDialog, useValue: null},
+                // {provide: ChangeDetectorRef, useValue: null},
+                // STORE
+                // {provide: Store, useValue: new Observable()}
+            ],
+            schemas: [ NO_ERRORS_SCHEMA ]
+        })
+               .overrideComponent(
+                   FormBuilder,
+                   {
+                       set: {
+                           providers: [
+                               { provide: FormBuilder, useClass: FormBuilderStub },
+                               { provide: MatDialog, useValue: null },
+                               { provide: ChangeDetectorRef, useValue: null },
+                               { provide: Store, useValue: STORE }
+                           ]
+                       }
+                   }
+               )
+               .compileComponents();
 
         fixture = TestBed.createComponent(SelectorComponent);
-        component = fixture.debugElement.componentInstance;
+        component = fixture.componentInstance;
         // dialog = TestBed.inject(MatDialog);
 
         component.countries = [
             { code: 'AF', name: 'Afghanistan', selected: false },
             { code: 'AL', name: 'Albania', selected: true }
         ];
+
+        fixture.detectChanges();
     }));
 
-    xit('should be created', () => {
-        fixture.detectChanges();
-        expect(component).toBeDefined();
-    });
+    it('should be created', fakeAsync(() => {
+        tick();
+        expect(component)
+            .toBeDefined();
+    }));
 });
 
