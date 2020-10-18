@@ -9,7 +9,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
 import { ICountryState } from '../../../../reducers/countries/countries.reducer';
 import { selectCountries } from '../../../../reducers/countries/countries.selector';
-import { CountriesSetSelectedAction } from '../../../../reducers/countries/countries.actions';
+import * as CountriesActions from '../../../../reducers/countries/countries.actions';
 
 @Component({
     selector: 'app-selector-popup-dialog',
@@ -65,8 +65,10 @@ export class SelectorPopupDialogComponent implements OnInit, OnDestroy {
     }
 
     public onSelect(): void {
-        this.store$.dispatch(new CountriesSetSelectedAction({
-            selectedCountries: this.form.controls.selectionList.value
+        this.store$.dispatch(CountriesActions.setSelected({
+            payload: {
+                selectedCountries: this.form.controls.selectionList.value
+            }
         }));
     }
 

@@ -1,20 +1,14 @@
-import { Action } from '@ngrx/store';
+import { createAction, props } from '@ngrx/store';
 
-export enum countriesActionsType {
-    setSelected = '[COUNTRIES] setSelected',
-    resetSelected = '[COUNTRIES] resetSelected',
+export interface IAction {
+    type: string;
+    payload?: {key: string[]};
 }
 
-export class CountriesSetSelectedAction implements Action {
-    readonly type = countriesActionsType.setSelected;
-
-    constructor(public payload: {
-        selectedCountries: string[]
-    }) {}
-}
-
-export class CountriesResetSelectedAction implements Action {
-    readonly type = countriesActionsType.resetSelected;
-}
-
-export type CountriesActions = CountriesSetSelectedAction | CountriesResetSelectedAction;
+export const setSelected = createAction('[COUNTRIES] setSelected',
+    props<{
+        payload: {
+            selectedCountries: string[]
+        }
+    }>());
+export const resetSelected = createAction('[COUNTRIES] resetSelected');

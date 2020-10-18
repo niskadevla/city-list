@@ -1,5 +1,7 @@
 import { ICountry } from '../../shared/models/country.model';
-import { CountriesActions, countriesActionsType } from './countries.actions';
+import * as CountriesActions from './countries.actions';
+import { createReducer, on } from '@ngrx/store';
+import { IAction } from './countries.actions';
 
 export interface ICountryState {
     countries: ICountry[];
@@ -18,22 +20,20 @@ const initialState: ICountryState = {
     ]
 };
 
-export const countriesReducer = (state = initialState, action: CountriesActions) => {
-    switch (action.type) {
-        case countriesActionsType.resetSelected:
-            return {
-                ...state,
-                countries: state.countries.map(country => ( { ...country, selected: false } ))
-            };
-        case countriesActionsType.setSelected:
-            return {
-                ...state,
-                countries: state.countries.map(country => action.payload.selectedCountries.includes(country.name)
-                                                                ? ( { ...country, selected: true } )
-                                                                : country)
-            };
-        default:
-            return state;
-    }
+const reducer = createReducer(
+    initialState,
+    on(CountriesActions.resetSelected, state => ({
+        ...state,
+        countries: state.countries.map(country => ( { ...country, selected: false } ))
+    })),
+    on(CountriesActions.setSelected, (state, action) => ({
+        ...state,
+        countries: state.countries.map(country => action.payload.selectedCountries.includes(country.name)
+                                                  ? ( { ...country, selected: true } )
+                                                  : country)
+    }))
+);
 
-};
+export function countriesReducer(state: ICountryState, action: IAction): ICountryState {
+    return reducer(state, action);
+}

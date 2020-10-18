@@ -9,7 +9,7 @@ import { map, take } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
 import { ICountryState } from '../../reducers/countries/countries.reducer';
 import { selectCountries } from '../../reducers/countries/countries.selector';
-import { CountriesResetSelectedAction } from '../../reducers/countries/countries.actions';
+import * as CountriesActions from '../../reducers/countries/countries.actions';
 
 @Component({
     selector: 'app-selector',
@@ -86,7 +86,7 @@ export class SelectorComponent implements OnInit, OnDestroy {
     }
 
     public reset(): void {
-        this.store$.dispatch(new CountriesResetSelectedAction());
+        this.store$.dispatch(CountriesActions.resetSelected());
     }
 
     private _filter(value: string): string[] {
